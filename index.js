@@ -6,3 +6,22 @@ const port = 3000;
 server.listen(port, ()=>{
     console.log(`Server listening at port ${port}`);
 });
+
+let users = [];
+
+io.on('connect', (socket) => {
+    let me;
+    socket.emit('users', users);
+    socket.on('login', (name, fn) => {
+        for(var user of users){
+            if (user==name) {
+                fn('failed');
+                return;
+            }
+        }
+        me = name;
+        users.push(me);
+        io.emit('newUser', me);
+        fn('success');
+    });
+});
