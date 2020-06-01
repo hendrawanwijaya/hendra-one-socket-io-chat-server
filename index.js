@@ -3,7 +3,7 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const port = 3000;
 
-server.listen(port, ()=>{
+server.listen(port, () => {
     console.log(`Server listening at port ${port}`);
 });
 
@@ -23,5 +23,21 @@ io.on('connect', (socket) => {
         users.push(me);
         io.emit('newUser', me);
         fn('success');
+    });
+    socket.on('logout', () => {
+        if (me == null) {
+            return;
+        }
+        let index = users.indexOf(me);
+        users.splice(index, 1);
+        io.emit('removeUser', me);
+    });
+    socket.on('disconnect', () => {
+        if (me==null) {
+            return;
+        }
+        let index = users.indexOf(me);
+        users.splice(index, 1);
+        socket.broadcast.emit('removeUser', me);
     });
 });
