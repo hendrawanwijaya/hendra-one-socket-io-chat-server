@@ -40,4 +40,7 @@ io.on('connect', (socket) => {
         users.splice(index, 1);
         socket.broadcast.emit('removeUser', me);
     });
+    socket.on('newMessage', (message) => {
+        io.emit('newMessage', message);
+    });
 });
